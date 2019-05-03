@@ -24,11 +24,7 @@ class MysqlDatabaseTaskStorage implements TaskStorageInterface
 
         ");
 
-        $statement->execute([
-            'description' => $task->getDescription(),
-            'due' => $task->getDue()->format('Y-m-d H:i:s'),
-            'complete' => $task->getComplete() ? 1 : 0,
-        ]);
+        $statement->execute($this->buildColomns($task));
         
         return $this->db->lastInsertId();
     }
@@ -44,12 +40,9 @@ class MysqlDatabaseTaskStorage implements TaskStorageInterface
                 where id = :id
         ");
 
-        $statement->execute([
-            'id' => $task->getId(),
-            'description' => $task->getDescription(),
-            'due' => $task->getDue()->format('Y-m-d H:i:s'),
-            'complete' => $task->getComplete() ? 1 : 0,
-        ]);
+        $statement->execute($this->buildColomns($task, [
+            'id' => $task->getId()
+        ]));
 
         return $this->get($task->getId());
     }
@@ -84,5 +77,14 @@ class MysqlDatabaseTaskStorage implements TaskStorageInterface
         $statement->execute();
 
         return $statement->fetchAll();
+    }
+
+    protected function buildColomns(Task $task, array $additional = [])
+    {
+        return array_merge([
+            'description' => $task->getDescription(),
+            'due' => $task->getDue()->format('Y-m-d H:i:s'),
+            'complete' => $task->getComplete() ? 1 : 0,
+        ], $additional);
     }
 }
