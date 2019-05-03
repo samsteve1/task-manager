@@ -1,6 +1,7 @@
 <?php
 
 use Todo\Models\Task;
+use Todo\TaskManager;
 use Todo\Storage\MysqlDatabaseTaskStorage;
 
 require 'vendor/autoload.php';
@@ -16,11 +17,14 @@ try {
 
 $storage = new MysqlDatabaseTaskStorage($db);
 
-$task = $storage->get(4);
+$manager = new TaskManager($storage);
 
-$task->setDescription('LEarn Node real good');
-$task->setDue(new DateTime('+ 3 weeks'));
-$task->setComplete();
+// $task = new Task;
+// $task->setDescription("Fnish drone project!");
+// $task->setDue(new DateTime('+ 4 weeks'));
 
-var_dump($storage->update($task));
+// var_dump($manager->addTask($task));
 
+$tasks = $manager->getTasks();
+
+var_dump($tasks);
